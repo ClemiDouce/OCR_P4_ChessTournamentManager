@@ -11,14 +11,6 @@ def add_points(tournoi, match_list):
             p[1] += match[i][1]
 
 
-def get_player_by_id(id):
-    return next((item for item in players if item.id == id), None)
-
-
-def get_player_by_name(name):
-    return next((item for item in players if item.name == name), None)
-
-
 def enter_player():
     '''
     A rajouter au vues
