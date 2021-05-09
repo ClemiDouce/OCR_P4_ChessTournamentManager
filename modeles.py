@@ -9,11 +9,10 @@ list_tournoi = []
 
 
 class Joueur:
-    def __init__(self, player_id, name, rank):
-        self.id = player_id
+    def __init__(self, name, rank):
+        self.id = len(list_player)
         self.name = name
         self.rank = rank
-        list_player.append(self)
 
     def serialized(self):
         return {
@@ -32,7 +31,7 @@ class Joueur:
 
     @staticmethod
     def __create_player_from_csv(data):
-        player = Joueur(data['id'], data['name'], data['rank'])
+        player = Joueur(data['name'], data['rank'])
         list_player.append(player)
 
     @staticmethod
@@ -42,20 +41,20 @@ class Joueur:
 
     @staticmethod
     def save_player_list():
+        player_table.truncate()
         for player in list_player:
-            player_table.truncate()
+            print(player)
             player_table.insert(player.serialized())
 
 
 class Tournoi:
-    def __init__(self, tournoi_id, name, player_list, max_turn=4):
-        self.id = tournoi_id
+    def __init__(self, name, player_list, max_turn=4):
+        self.id = len(list_tournoi)
         self.name = name
         self.players = player_list
         self.max_turn = max_turn
         self.turn_list = []
         self.actual_turn = 0
-        list_tournoi.append(self)
 
     def serialized(self):
         return {
@@ -71,9 +70,10 @@ class Tournoi:
     def __create_tournoi_from_csv(data):
         player_list = [[p['id_player'], p['score']] for p in data['players']]
         turn_list = Tour.create_tour_from_data(data['turn_list'])
-        tournoi = Tournoi(data['id'], data['name'], player_list, data['max_turn'])
+        tournoi = Tournoi(data['name'], player_list, data['max_turn'])
         tournoi.turn_list = turn_list
         tournoi.actual_turn = data['actual_turn']
+        list_tournoi.append(tournoi)
 
     @staticmethod
     def load_tournoi_list():
@@ -82,9 +82,10 @@ class Tournoi:
 
     @staticmethod
     def save_tournoi_list():
-        for player in list_player:
-            tournoi_table.truncate()
-            tournoi_table.insert(player.serialized())
+        print("let's insert some tournament")
+        tournoi_table.truncate()
+        for tournoi in list_tournoi:
+            tournoi_table.insert(tournoi.serialized())
 
 
 class Tour:
@@ -105,14 +106,17 @@ class Tour:
 
     @staticmethod
     def create_tour_from_data(data):
-        return [
+        print("Start turn creation")
+        turn_list = [
             Tour(
-                data['name'],
+                turn['name'],
                 [(
-                    [turn['p1']['id'], turn['p1']['score']],
-                    [turn['p2']['id'], turn['p2']['score']]
-                )]
+                    [match['p1']['id'], match['p1']['score']],
+                    [match['p2']['id'], match['p2']['score']]
+                ) for match in turn['match_list']]
             )
             for turn in data
         ]
+        print(turn_list)
+        return turn_list
 
