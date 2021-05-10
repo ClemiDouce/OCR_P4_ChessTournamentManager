@@ -1,6 +1,6 @@
 from tinydb import TinyDB
 
-db = TinyDB('test.json')
+db = TinyDB('database.json')
 player_table = db.table('player')
 tournoi_table = db.table('tournoi')
 
@@ -9,35 +9,44 @@ list_tournoi = []
 
 
 class Joueur:
-    def __init__(self, name, rank):
+    def __init__(self, first_name, last_name, rank):
         self.id = len(list_player)
-        self.name = name
+        self.first_name = first_name
+        self.last_name = last_name
         self.rank = rank
 
     def serialized(self):
         return {
             'id': self.id,
-            'name': self.name,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
             'rank': self.rank,
         }
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}'
+                f'({self.id}, {self.first_name}, {self.last_name}, {self.rank})')
 
     @staticmethod
     def get_by_id(player_id):
         return next((item for item in list_player if item.id == player_id), None)
 
     @staticmethod
-    def get_player_by_name(name):
-        return next((item for item in list_player if item.name == name), None)
+    def player_exist(complete_name):
+        return next((item for item in list_player if str(item).lower() == complete_name), None)
 
     @staticmethod
-    def __create_player_from_csv(data):
-        player = Joueur(data['name'], data['rank'])
+    def _create_player_from_csv(data):
+        player = Joueur(data['first_name'], data['last_name'], data['rank'])
         list_player.append(player)
 
     @staticmethod
     def load_player_list():
         for player in player_table.all():
-            Joueur.__create_player_from_csv(player)
+            Joueur._create_player_from_csv(player)
 
     @staticmethod
     def save_player_list():
@@ -67,7 +76,7 @@ class Tournoi:
         }
 
     @staticmethod
-    def __create_tournoi_from_csv(data):
+    def _create_tournoi_from_csv(data):
         player_list = [[p['id_player'], p['score']] for p in data['players']]
         turn_list = Tour.create_tour_from_data(data['turn_list'])
         tournoi = Tournoi(data['name'], player_list, data['max_turn'])
@@ -78,7 +87,7 @@ class Tournoi:
     @staticmethod
     def load_tournoi_list():
         for tournoi in tournoi_table.all():
-            Tournoi.__create_tournoi_from_csv(tournoi)
+            Tournoi._create_tournoi_from_csv(tournoi)
 
     @staticmethod
     def save_tournoi_list():
@@ -119,4 +128,3 @@ class Tour:
         ]
         print(turn_list)
         return turn_list
-
