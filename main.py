@@ -1,61 +1,13 @@
-from random import shuffle
-
-import modeles
-from modeles import Joueur, Tournoi, Tour, list_player, list_tournoi
+from menuenums import Menu, Rapports, TriStyle
+from modeles import Joueur, Tour, Tournoi, list_player, list_tournoi
 from view import View
-from collections import namedtuple
-from enum import Enum
-
-
-class Rapports(Enum):
-    PLAYERS = 0
-    PLAYERS_TOURNAMENT = 1
-    TOURNAMENTS = 2
-    TURNS_TOURNAMENT = 3
-    MATCHS_TOURNAMENT = 4
-
-
-class TriStyle(Enum):
-    SCORE = 1
-    ALPHABETIQUE = 0
-
-
-def tri_suisse(list_player):
-    pass
-
-
-def add_points(tournoi, match_list):
-    """
-    Rajoute les points de chaque matchs aux joueurs du tournoi
-    """
-    for match in match_list:
-        for i, p in enumerate((p for p in tournoi.players if p[0] in [match[0][0], match[1][0]])):
-            p[1] += match[i][1]
-
-
-# def print_tournoi_state(tournoi):
-#     """
-#     A rajouter dans vue
-#     Affiche tout les joueurs ainsi que leur score de tournoi
-#     """
-#     for player in tournoi.players:
-#         print(f'{get_player_by_id(player[0]).name} Score actuel : {player[1]}')
-#
-#
-# def print_match(match):
-#     """
-#     A rajouter dans Vue
-#     Affiche un match
-#     """
-#     print(f"A ma gauche, {get_player_by_id(match[0][0]).name} avec {match[0][1]}")
-#     print(f"A ma droite, {get_player_by_id(match[1][0]).name} avec {match[1][1]}")
 
 
 def launch_tournament():
-    t_name, t_date, t_location = View.ask_tournament_infos()
-    print('Lancement du tournoi')
+    t_name, t_date, t_location, t_turn_cnt, t_player_cnt, t_play_style = View.ask_tournament_infos()
+    print(' ---- Lancement du tournoi ----')
     tournament_player = []
-    while len(tournament_player) < 3:
+    while len(tournament_player) < t_player_cnt:
         # Demande nom
         player_name = View.enter_player_name()
         # Verification Nom
@@ -68,31 +20,37 @@ def launch_tournament():
             new_player = Joueur(p_first_name, p_last_name, p_birth_date, p_gender, p_rank)
             tournament_player.append([new_player.id, 0])
 
-    tournoi = Tournoi(
+    with Tournoi(
             t_name,
             t_date,
             t_location,
-            tournament_player
-    )
+            tournament_player,
+            t_player_cnt
+    ) as tournoi:
 
-    print(tournoi.players)
-
-    # Debut du tournoi
-    # while tournoi.actual_turn < tournoi.max_turn:
-    #     print(tournoi)
-    #     shuffle(tournoi.players)
-    #     tournoi.actual_turn += 1
-    #     tour = Tour(
-    #             1,
-    #             "Tour numero " + str(tournoi.actual_turn),
-    #             gen_match_list(tournoi.players)
-    #     )
-    #     tournoi.turn_list.append(tour)
-    #     for match in tour.match_list:
-    #         match[0][1], match[0][1] = ask_score(match)
-    #         print_match(match)
-    #         # add score to player
-    #     add_points(tournoi, tour.match_list)
+        # Debut du tournoi
+        while tournoi.actual_turn < tournoi.max_turn:
+            tournoi.actual_turn += 1
+            if tournoi.actual_turn == 1:
+                matchs = tournoi.tri_suisse()
+            else:
+                matchs = tournoi.tri_francais()
+            tour = Tour(
+                    f"Round {tournoi.actual_turn}",
+                    matchs
+            )
+            tournoi.turn_list.append(tour)
+            print(f"---- {tour.name} ----")
+            for match in tour.match_list:
+                # Demander le score
+                player1 = Joueur.get_by_id(match[0][0])
+                player2 = Joueur.get_by_id(match[1][0])
+                match[0][1], match[1][1] = View.ask_score(
+                        f"{player1.first_name}.{player1.last_name[:1]}",
+                        f"{player2.first_name}.{player2.last_name[:1]}"
+                )
+                # Ajouter le score a chaque joueur
+                tournoi.add_point(match)
 
 
 # def _search_winner():
@@ -115,9 +73,9 @@ def generation_rapport():
         if choice == Rapports.PLAYERS.value:
             players_to_show = []
             if sub_choice == TriStyle.SCORE.value:
-                players_to_show = sorted(modeles.list_player, key=lambda player: player.rank)
+                players_to_show = sorted(list_player, key=lambda player: player.rank)
             elif sub_choice == TriStyle.ALPHABETIQUE.value:
-                players_to_show = sorted(modeles.list_player, key=lambda player: player.last_name)
+                players_to_show = sorted(list_player, key=lambda player: player.last_name)
             View.display_player_list(players_to_show)
 
         elif choice == Rapports.PLAYERS_TOURNAMENT.value:
@@ -126,9 +84,15 @@ def generation_rapport():
             tournament = list_tournoi[tournoi_choice]
             player_list = [Joueur.get_by_id(p[0]) for p in tournament.players]
             if sub_choice == TriStyle.SCORE.value:
-                players_to_show = sorted(player_list, key=lambda player: player.rank)
+                players_to_show = sorted(
+                        player_list,
+                        key=lambda player: player.rank
+                )
             elif sub_choice == TriStyle.ALPHABETIQUE.value:
-                players_to_show = sorted(player_list, key=lambda player: player.last_name)
+                players_to_show = sorted(
+                        player_list,
+                        key=lambda player: player.last_name
+                )
             View.display_player_list(players_to_show)
 
         elif choice == Rapports.TOURNAMENTS.value:
@@ -149,8 +113,24 @@ def generation_rapport():
                     match[1][0] = Joueur.get_by_id(match[1][0])
                     show_match.append(match)
             View.display_tournament_matchs(show_match)
+        elif choice == Rapports.RETOUR_MENU.value:
+            break
+
 
 # Debut du programme
 if __name__ == "__main__":
     Joueur.load_player_list()
     Tournoi.load_tournoi_list()
+
+    while True:
+        menu_choice = View.show_menu_options()
+        if menu_choice == Menu.LAUNCH_TOURNAMENT.value:
+            launch_tournament()
+        elif menu_choice == Menu.MODIFICATION.value:
+            pass
+        elif menu_choice == Menu.RAPPORT.value:
+            generation_rapport()
+        elif menu_choice == Menu.QUIT.value:
+            Joueur.save_player_list()
+            Tournoi.save_tournoi_list()
+            break
