@@ -1,33 +1,31 @@
-import pprint
+from pprint import pprint
 from modeles import Tournoi, Joueur, Tour, list_player, list_tournoi
+from random import randrange, shuffle
 
 Joueur.load_player_list()
+Tournoi.load_tournoi_list()
 
-tournoi = Tournoi(
-        "Winterfield",
-        [[player.id, 0] for player in list_player])
+def gen_player_list():
+    shuffle(list_player)
+    return [[player.id, 0] for player in list_player[:4]]
 
-turn_list = [
-    Tour('Round1', [([turn, 0], [0, turn]) for turn in range(4)]),
-    Tour('Round2', [([turn, 0], [0, turn]) for turn in range(4)]),
-    Tour('Round3', [([turn, 0], [0, turn]) for turn in range(4)]),
-]
+def gen_match_list(player_list):
+    return [([randrange(len(player_list)), 0], [randrange(len(player_list)), 0]) for x in range(4)]
 
-tournoi.turn_list = turn_list
+def gen_turn_list(player_list):
+    return [
+        Tour('Round' + str(x), gen_match_list(player_list))
+        for x in range(3)
+    ]
 
-tournoi_2 = Tournoi(
-        "Le tournoi des 15",
-        [[player.id, 0] for player in list_player])
+def gen_turnament(name, date, location):
+    player_list = gen_player_list()
+    tournoi = Tournoi(name, date, location, player_list)
+    tournoi.turn_list = gen_turn_list(player_list)
 
-turn_list_2 = [
-    Tour('Round1', [([turn, 2], [1, turn]) for turn in range(4)]),
-    Tour('Round2', [([turn, 1], [2, turn]) for turn in range(4)]),
-    Tour('Round3', [([turn, 3], [1, turn]) for turn in range(4)]),
-]
+def gen_player(first, last, gender):
+    Joueur(first, last, f"{randrange(31)+1}/{randrange(12)+1}/{randrange(90,99)}", gender, randrange(50, 400))
 
-tournoi_2.turn_list = turn_list_2
-
-list_tournoi.append(tournoi)
-list_tournoi.append(tournoi_2)
-
-
+def save_all():
+    Joueur.save_player_list()
+    Tournoi.save_tournoi_list()
