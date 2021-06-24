@@ -1,0 +1,42 @@
+{
+  "player": {
+    "1": {
+      "id": 1,
+      "first_name": "Mathieu",
+      "last_name": "Ducournau",
+      "birth_date": "14/03/1994",
+      "gender": "M",
+      "rank": 1000
+    },
+    "2": {
+      "id": 2,
+      "first_name": "Clement",
+      "last_name": "Marcel",
+      "birth_date": "10/02/1997",
+      "gender": "M",
+      "rank": 2000
+    }
+  },
+  "tournament": {
+    "1": {
+      "id": 0,
+      "name": "a",
+      "location": "a",
+      "date": "a",
+      "players": [
+        {
+          "id_player": 1,
+          "score": 0
+        },
+        {
+          "id_player": 2,
+          "score": 0
+        }
+      ],
+      "max_turn": "a",
+      "turn_list": [],
+      "actual_turn": 0,
+      "time_control": "a"
+    }
+  }
+}
