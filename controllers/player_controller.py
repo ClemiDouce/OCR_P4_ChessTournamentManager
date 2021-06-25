@@ -40,6 +40,10 @@ class PlayerController:
         return next((player for player in self.player_list if player.first_name == first_name and player.last_name
                      == last_name), None)
 
+    def modify_player_elo(self):
+        self.view.show_all_players()
+
+
     def load_player_list(self):
         my_list = Player.load_all()
         for player in my_list:

@@ -25,3 +25,31 @@ class PlayerView:
                 print('Le score doit etre une valeur numérique')
                 continue
             return first_name, last_name, birth_date, gender, rank
+
+
+    def ask_player_index(self, players_list):
+        print(f"Index | Player Full Name | ")
+        for index, player in enumerate(players_list):
+            print(f"[{index}] | {player.last_name} {player.first_name} | {player.rank}")
+        new_elo = -1
+        while True:
+            try:
+                new_elo = int(input("Entrez le nouveau classement : "))
+            except ValueError:
+                print("Vous n'avez pas rentré un chiffre")
+                continue
+            break
+        return new_elo
+
+
+    def ask_new_elo(self, player):
+        print(f'Actual elo of {player.first_name} {player.last_name} : {player.rank}')
+        new_elo = -1
+        while True:
+            try:
+                new_elo = int(input("Entrez le nouveau classement : "))
+            except ValueError:
+                print("Vous n'avez pas rentré un chiffre")
+                continue
+            break
+        return new_elo

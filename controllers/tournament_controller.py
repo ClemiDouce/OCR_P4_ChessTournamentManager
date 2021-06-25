@@ -11,11 +11,19 @@ Participant = namedtuple('Participant', 'player_id, score')
 
 
 class TournamentController:
+    _instance = None
+
     def __init__(self):
         self.tournament_list = []
         self.view = TournamentView()
         self.round_controller = RoundController()
         self.player_controller = PlayerController.get_instance()
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = TournamentController()
+        return cls._instance
 
     def create_new_tournament(self):
         t_name, t_date, t_location, t_max_turn, t_player_cnt, t_play_style = self.view.new_tournament()

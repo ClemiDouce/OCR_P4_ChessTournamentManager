@@ -1,2 +1,3 @@
 class GameView:
-    pass
+    def show_menu_options(self):
+        pass
