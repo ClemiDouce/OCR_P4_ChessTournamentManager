@@ -32,7 +32,7 @@ class GameController:
                 pass
 
     def launch_tournament(self):
-        new_tournament = self.tournament_controller.create_new_tournament()
+        tournament = self.tournament_controller.get_tournament()
 
 
     def exit(self):

@@ -3,8 +3,8 @@ from collections import namedtuple
 from models.tournament import Tournament
 
 from views.tournament_view import TournamentView
-from round_controller import RoundController
-from player_controller import PlayerController
+from controllers.round_controller import RoundController
+from controllers.player_controller import PlayerController
 
 Participant = namedtuple('Participant', 'player_id, score')
 
@@ -23,6 +23,17 @@ class TournamentController:
         if cls._instance is None:
             cls._instance = TournamentController()
         return cls._instance
+
+    def get_tournament(self) -> Tournament:
+        while True:
+            choice = self.view.ask_tournament_load()
+            tournament = None
+            if choice == "1":
+                tournament = self.get_active_tournament()
+            elif choice == "2":
+                tournament = self.create_new_tournament()
+            if tournament is not None:
+                return tournament
 
     def create_new_tournament(self):
         t_name, t_date, t_location, t_max_turn, t_player_cnt, t_play_style = self.view.new_tournament()
@@ -51,8 +62,11 @@ class TournamentController:
             tournament for tournament in self.tournament_list
             if tournament.actual_turn < tournament.max_turn
         ]
-        self.view.ask_tournament_index(list_tournament)
-        return list_tournament
+        if len(list_tournament) == 0:
+            self.view.display_no_tournament()
+            return None
+        choice = self.view.ask_tournament_index(list_tournament)
+        return list_tournament[choice]
 
     def run_tournament(self, tournament):
         pass

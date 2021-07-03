@@ -14,7 +14,7 @@ class TournamentView:
                 print('Le nombre de participant doit etre un chiffre')
                 continue
 
-    def enter_score(match):
+    def ask_score(match):
         result = -1
         player1 = match[0][0]
         player2 = match[1][0]
@@ -40,18 +40,6 @@ class TournamentView:
             return 0, 1
         else:
             return 0.5, 0.5
-
-    def display_tournament_rounds(self, tournament):
-        print(f"---- Liste des tours du tournoi {tournament.name} ----")
-        for turn in tournament.turn_list:
-            print(turn)
-
-    def display_tournament_matchs(self, match_list):
-        for match in match_list:
-            player1 = match[0][0]
-            player2 = match[1][0]
-            print(f"{player1} / Score : {match[0][1]}\n"
-                  f"{player2} / Score : {match[1][1]}")
 
     def ask_tournament_index(self, tournoi_list):
         while True:
@@ -68,35 +56,32 @@ class TournamentView:
             else:
                 return choice
 
+    def ask_tournament_load(self):
+        while True:
+            print("Voulez vous \n[1] Charger un tournoi existant\n[2] Créer un nouveau tournoi")
+            choice = input("Réponse : ")
+            if choice in ["1", "2"]:
+                return choice
+            else:
+                print("Votre choix n'existe pas")
+
+    def display_tournament_rounds(self, tournament):
+        print(f"---- Liste des tours du tournoi {tournament.name} ----")
+        for turn in tournament.turn_list:
+            print(turn)
+
+    def display_tournament_matchs(self, match_list):
+        for match in match_list:
+            player1 = match[0][0]
+            player2 = match[1][0]
+            print(f"{player1} / Score : {match[0][1]}\n"
+                  f"{player2} / Score : {match[1][1]}")
+
     def display_ranking(self, players):
         print("---- CLASSEMENT ----")
         for index, p in enumerate(players):
             player, score = p
             print(f"[{index + 1}] - {player.first_name} {player.last_name} / Score : {score}")
 
-    def enter_score(self, match):
-        result = -1
-        player1 = match[0][0]
-        player2 = match[1][0]
-        print(f"-- {player1.first_name}{player1.last_name[:1]} vs"
-              f" {player2.first_name}{player2.last_name[:1]} -- ")
-        while True:
-            try:
-                result = int(input(f"Entrez le chiffre correspondant au résultat\n"
-                                   f"[1] Victoire de {player1.first_name}\n"
-                                   f"[2] Victoire de {player2.first_name}\n"
-                                   "[3] Egalité"))
-            except ValueError:
-                print("Vous n'avez pas entré un chiffre")
-                continue
-            if result not in [1, 2, 3]:
-                print("Aucun resultat correspond a ce numero de choix")
-                continue
-            else:
-                break
-        if result == 1:
-            return 1, 0
-        elif result == 2:
-            return 0, 1
-        else:
-            return 0.5, 0.5
+    def display_no_tournament(self):
+        print("Il n'y a aucun match a charger")
