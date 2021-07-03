@@ -3,9 +3,8 @@ from collections import namedtuple
 from models.tournament import Tournament
 
 from views.tournament_view import TournamentView
-
-from .round_controller import RoundController
-from .player_controller import PlayerController
+from round_controller import RoundController
+from player_controller import PlayerController
 
 Participant = namedtuple('Participant', 'player_id, score')
 
@@ -46,6 +45,18 @@ class TournamentController:
             print(player)
         self.tournament_list.append(tournoi)
         return tournoi
+
+    def get_active_tournament(self):
+        list_tournament = [
+            tournament for tournament in self.tournament_list
+            if tournament.actual_turn < tournament.max_turn
+        ]
+        self.view.ask_tournament_index(list_tournament)
+        return list_tournament
+
+    def run_tournament(self, tournament):
+        pass
+
 
     def load_tournament_list(self):
         my_list = Tournament.load_all()

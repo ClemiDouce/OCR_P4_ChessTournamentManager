@@ -22,9 +22,9 @@ class PlayerController:
         if player is not None:
             return player
         else:
-            return self.add_player(first_name, last_name)
+            return self.ask_player_info(first_name, last_name)
 
-    def add_player(self, first_name, last_name):
+    def ask_player_info(self, first_name, last_name):
         player_info = self.view.new_player(first_name, last_name)
         new_player = Player(
                 len(self.player_list),
@@ -32,6 +32,17 @@ class PlayerController:
         )
         self.player_list.append(new_player)
         return new_player
+
+    def create_new_player(self):
+        while True:
+            first_name, last_name = self.view.ask_player_name()
+            if self.get_by_name(first_name, last_name) is None:
+                self.ask_player_info(first_name, last_name)
+                print('Joueur créé')
+                break
+            else:
+                print('Joueur déja existant')
+                continue
 
     def get_by_id(self, player_id):
         return next((player for player in self.player_list if player.id == player_id), None)
@@ -41,8 +52,8 @@ class PlayerController:
                      == last_name), None)
 
     def modify_player_elo(self):
-        self.view.show_all_players()
-
+        # self.view.show_all_players()
+        pass
 
     def load_player_list(self):
         my_list = Player.load_all()

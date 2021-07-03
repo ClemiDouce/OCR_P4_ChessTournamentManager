@@ -53,7 +53,7 @@ class TournamentView:
             print(f"{player1} / Score : {match[0][1]}\n"
                   f"{player2} / Score : {match[1][1]}")
 
-    def ask_tournoi_index(self, tournoi_list):
+    def ask_tournament_index(self, tournoi_list):
         while True:
             for index, tournament in enumerate(tournoi_list):
                 print(f"[{index}] - {tournament.name}")

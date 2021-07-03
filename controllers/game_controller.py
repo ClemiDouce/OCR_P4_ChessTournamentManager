@@ -14,22 +14,22 @@ class GameController:
     def launch(self):
         self.player_controller.load_player_list()
         self.tournament_controller.load_tournament_list()
-        self.launch_tournament()
-        self.exit()
         while True:
             menu_choice = self.view.show_menu_options()
             if menu_choice == 1:
                 self.launch_tournament()
                 break
             elif menu_choice == 2:
-                self.player_controller.add_player()
+                self.player_controller.create_new_player()
                 break
             elif menu_choice == 3:
                 self.player_controller.modify_player_elo()
                 break
             elif menu_choice == 4:
-                self.exit_program()
+                self.exit()
                 break
+            elif menu_choice == 5:
+                pass
 
     def launch_tournament(self):
         new_tournament = self.tournament_controller.create_new_tournament()
