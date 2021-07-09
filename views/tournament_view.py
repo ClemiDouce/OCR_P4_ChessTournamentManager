@@ -1,45 +1,22 @@
 class TournamentView:
     def new_tournament(self):
-        while True:
-            try:
-                tournament_name = input("Entrez le nom du tournoi")
-                tournament_date = input("Entrez la date du tournoi(JJ/MM/AAAA)")
-                tournament_location = input("Entrez le lieu du tournoi")
-                tournament_turn_number = input("Entrez le nombre de tour")
-                tournament_play_style = input("Entrer le style de partie (bullet / blitz / coup rapide)")
-                tournament_player_number = int(input("Entrez le nombre de participant"))
-                return (tournament_name, tournament_date, tournament_location,
-                        tournament_turn_number, tournament_player_number, tournament_play_style)
-            except ValueError:
-                print('Le nombre de participant doit etre un chiffre')
-                continue
+        tournament_name = input("Entrez le nom du tournoi : ")
+        tournament_location = input("Entrez le lieu du tournoi : ")
+        tournament_start_date = input("Entrez la date de debut du tournoi (JJ/MM/AAAA) : ")
+        tournament_end_date = input("Entrez la date de fin du tournoi (JJ/MM/AAAA) : ")
+        tournament_player_number = input("Entrez le nombre de participant : ")
+        tournament_max_turn = input("Entrez le nombre de tour (doit etre inferieur au nombre de joueur : ")
+        tournament_play_style = input("Entrer le style de partie (bullet / blitz / coup rapide) : ")
+        return (tournament_name, tournament_location, tournament_start_date, tournament_end_date,
+                tournament_max_turn, tournament_player_number, tournament_play_style)
 
-    def ask_score(match):
-        result = -1
-        player1 = match[0][0]
-        player2 = match[1][0]
-        print(f"-- {player1.first_name}{player1.last_name[:1]} vs"
-              f" {player2.first_name}{player2.last_name[:1]} -- ")
-        while True:
-            try:
-                result = int(input(f"Entrez le chiffre correspondant au résultat\n"
-                                   f"[1] Victoire de {player1.first_name}\n"
-                                   f"[2] Victoire de {player2.first_name}\n"
-                                   "[3] Egalité"))
-            except ValueError:
-                print("Vous n'avez pas entré un chiffre")
-                continue
-            if result not in [1, 2, 3]:
-                print("Aucun resultat correspond a ce numero de choix")
-                continue
-            else:
-                break
-        if result == 1:
-            return 1, 0
-        elif result == 2:
-            return 0, 1
-        else:
-            return 0.5, 0.5
+    def ask_score(self, match):
+        print(f"-- {match.p1.shorted} vs {match.p2.shorted} -- ")
+        print(f"Entrez le chiffre correspondant au résultat\n"
+              f"[1] Victoire de {match.p1.first_name}\n"
+              f"[2] Victoire de {match.p2.first_name}\n"
+              "[3] Egalité\n")
+        return input("Votre réponse : ")
 
     def ask_tournament_index(self, tournoi_list):
         while True:
@@ -58,17 +35,17 @@ class TournamentView:
 
     def ask_tournament_load(self):
         while True:
-            print("Voulez vous \n[1] Charger un tournoi existant\n[2] Créer un nouveau tournoi")
+            print("Voulez vous \n[0] Charger un tournoi existant\n[1] Créer un nouveau tournoi\n[2] Quitter")
             choice = input("Réponse : ")
-            if choice in ["1", "2"]:
+            if choice in ["0", "1", "2"]:
                 return choice
             else:
                 print("Votre choix n'existe pas")
 
     def display_tournament_rounds(self, tournament):
         print(f"---- Liste des tours du tournoi {tournament.name} ----")
-        for turn in tournament.turn_list:
-            print(turn)
+        for round in tournament.round_list:
+            print(round)
 
     def display_tournament_matchs(self, match_list):
         for match in match_list:
@@ -84,4 +61,39 @@ class TournamentView:
             print(f"[{index + 1}] - {player.first_name} {player.last_name} / Score : {score}")
 
     def display_no_tournament(self):
-        print("Il n'y a aucun match a charger")
+        print("Il n'y a aucun tournoi")
+
+    def display_turn(self):
+        print("C'est le début du tour")
+
+    def display_end_match(self):
+        print('Fin des matchs !')
+
+    def display_tournament_player(self, tournament, player_list):
+        print(f"---- {tournament.name} ----")
+        for player in player_list:
+            print(player)
+            print("-" * 70)
+
+    def display_tournaments(self, list_tournament):
+        print("f---- Tournaments ----")
+        for tournament in list_tournament:
+            print(tournament)
+            print('-' * 70)
+
+    def display_match_tournaments(self, match_list):
+        for key, matchs in match_list.items():
+            print(f"---- {key} ----")
+            for match in matchs:
+                print(match)
+
+    def display_round_tournaments(self, round_list):
+        print('Liste de match')
+        print('|'.join([
+            "Name".center(20),
+            "Match Count".center(20),
+            "Start time".center(20),
+            "End time".center(20)
+        ]))
+        for round in round_list:
+            print(round)
