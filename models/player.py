@@ -10,7 +10,7 @@ class Player:
         self.last_name = last_name
         self.birth_date = birth_date
         self.gender = gender
-        self.rank = rank
+        self.rank = int(rank)
 
     @property
     def serialized(self):
@@ -24,15 +24,21 @@ class Player:
         }
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return "|".join([
+            self.first_name.center(10),
+            self.last_name.center(25),
+            self.birth_date.center(15),
+            self.gender.center(10),
+            str(self.rank).center(10)
+        ])
 
     def __repr__(self):
         return (f'{self.__class__.__name__}'
                 f'({self.id}, {self.first_name}, {self.last_name}, {self.rank})')
 
-    @classmethod
-    def insert_one(cls, text):
-        cls.player_table.insert(text)
+    @property
+    def shorted(self):
+        return f"{self.first_name}.{self.last_name[0]}"
 
     @classmethod
     def load_all(cls):
