@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 tinydb = "*"
+flake8 = "*"
+flake8-html = "*"
 
 [dev-packages]
 
