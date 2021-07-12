@@ -97,3 +97,9 @@ class TournamentView:
         ]))
         for round in round_list:
             print(round)
+
+    def ask_stop_tournament(self):
+        print("Voulez vous continuer le tournoi ?")
+        print('[0] - Oui\n[1] - Non\n')
+        choice = input('Votre réponse : ')
+        return choice

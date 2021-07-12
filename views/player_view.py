@@ -25,27 +25,13 @@ class PlayerView:
     def ask_player_index(self, players_list):
         print("Index | Player Full Name | ")
         for index, player in enumerate(players_list):
-            print(f"[{index}] | {player.last_name} {player.first_name} | {player.rank}")
-        new_elo = -1
-        while True:
-            try:
-                new_elo = int(input("Entrez le nouveau classement : "))
-            except ValueError:
-                print("Vous n'avez pas rentré un chiffre")
-                continue
-            break
-        return new_elo
+            print(f"[{player.id}] | {player.last_name} {player.first_name} | {player.rank}")
+        player_index = input("Entrez l'index du joueur : ")
+        return player_index
 
     def ask_new_elo(self, player):
         print(f'Actual elo of {player.first_name} {player.last_name} : {player.rank}')
-        new_elo = -1
-        while True:
-            try:
-                new_elo = int(input("Entrez le nouveau classement : "))
-            except ValueError:
-                print("Vous n'avez pas rentré un chiffre")
-                continue
-            break
+        new_elo = input("Entrez le nouveau classement : ")
         return new_elo
 
     def ask_continue_create(self):

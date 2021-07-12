@@ -82,26 +82,55 @@ class TournamentController:
             actual_round = self.round_controller.create_round(f"Round {tournament.actual_turn}", matchs)
             tournament.round_list.append(actual_round)
             self.view.display_turn()
-            for match in actual_round.match_list:
-                while True:
-                    result = self.view.ask_score(match)
-                    if result in {1, 2, 3}:
-                        break
-                    else:
-                        continue
-                if result == 1:
-                    match.p1_score, match.p2_score = 1, 0
-                elif result == 2:
-                    match.p1_score, match.p2_score = 0, 1
-                else:
-                    match.p1_score, match.p2_score = 0.5, 0.5
-                tournament.add_point(match)
-                actual_round.end_time = get_now_time()
+            self.run_round(tournament, actual_round)
+            if tournament.actual_turn < tournament.max_turn - 1:
+                stop_tournament = self.view.ask_stop_tournament()
+                if stop_tournament == "0":
+                    continue
+                elif stop_tournament == "1":
+                    self.save_tournament_list()
+                    return
 
         # annonce du gagnant
+        self.search_winner(tournament)
         print(f"--- Fin du tournoi {tournament.name} ---")
         self.save_tournament_list()
         self.view.display_end_match()
+
+    def run_round(self, tournament, round):
+        for match in round.match_list:
+            while True:
+                result = self.view.ask_score(match)
+                if result in {"1", "2", "3"}:
+                    break
+                else:
+                    continue
+            if result == "1":
+                match.p1_score, match.p2_score = 1, 0
+            elif result == "2":
+                match.p1_score, match.p2_score = 0, 1
+            else:
+                match.p1_score, match.p2_score = 0.5, 0.5
+            tournament.add_point(match)
+        round.end_time = get_now_time()
+
+    def sort_by_score_and_rank(self, participant):
+        player_rank = self.player_controller.get_by_id(participant.id).rank
+        return participant.score, player_rank
+
+    def search_winner(self, tournoi):
+        # sort by score and ranking
+        classement = sorted(tournoi.players, key=self.sort_by_score_and_rank, reverse=True)
+
+        # recuperation des joueurs ayant le score maximum
+        best_score = list(
+                (
+                    self.player_controller.get_by_id(participant.id),
+                    participant.score
+                )
+                for participant in classement
+        )
+        self.view.display_ranking(best_score)
 
     def get_active_tournament(self):
         list_tournament = [
@@ -115,12 +144,15 @@ class TournamentController:
         return list_tournament[choice]
 
     def first_sorting(self, tournament):
-        sorted_list = sorted(tournament.players, key=lambda p: self.player_controller.get_by_id(p.id).rank)
+        sorted_list = sorted(
+                tournament.players,
+                key=lambda p: self.player_controller.get_by_id(p.id).rank
+        )
         first_half, second_half = split_array_in_half(sorted_list)
         match_list = [
-            Match(
-                self.player_controller.get_by_id(first_half[i].id), 0,
-                self.player_controller.get_by_id(second_half[i].id), 0
+            self.create_match(
+                first_half[i],
+                second_half[i]
             )
             for i in range(len(first_half))
         ]
@@ -130,39 +162,45 @@ class TournamentController:
         match_list = []
         used_id = set()
         sorted_participants = sorted(
-            tournament.players, key=lambda participant: (
-                participant.score,
-                self.player_controller.get_by_id(participant.id).rank
+            tournament.players, key=lambda p: (
+                    p.score,
+                    self.player_controller.get_by_id(p.id).rank
             )
         )
-        for index, player in enumerate(sorted_participants):
+        for index, participant in enumerate(sorted_participants):
             i = 1
-            if player.id in used_id:
+            if participant.id in used_id:
                 continue
             while index + i < len(sorted_participants):
-                other_player_id = sorted_participants[index + i].id
-                if other_player_id in used_id or other_player_id in player.old_matchs:
+                other_participant = sorted_participants[index + i]
+                if other_participant.id in used_id or other_participant.id in participant.old_matchs:
                     i += 1
                     if i == len(sorted_participants):
                         match_list.append(
-                            Match(
-                                self.player_controller.get_by_id(player.id), 0,
-                                self.player_controller.get_by_id(other_player_id), 0
+                            self.create_match(
+                                    participant, other_participant
                             )
                         )
-                        used_id.update({player.player_id, other_player_id})
+                        used_id.update({participant.id, other_participant})
                         break
                     continue
                 else:
                     match_list.append(
-                        Match(
-                            self.player_controller.get_by_id(player.id), 0,
-                            self.player_controller.get_by_id(other_player_id), 0
+                        self.create_match(
+                                participant, other_participant
                         )
                     )
-                    used_id.update({player.id, other_player_id})
+                    used_id.update({participant.id, other_participant.id})
                     break
         return match_list
+
+    def create_match(self, participant_1, participant_2):
+        participant_1.old_matchs.add(participant_2.id)
+        participant_2.old_matchs.add(participant_1.id)
+        return Match(
+                self.player_controller.get_by_id(participant_1.id), 0,
+                self.player_controller.get_by_id(participant_2.id), 0
+        )
 
     # Rapport
     def display_tournament_player(self, sort: int):

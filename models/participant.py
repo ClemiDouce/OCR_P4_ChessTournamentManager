@@ -1,6 +1,6 @@
 class Participant:
-    def __init__(self, id, score=0, old_matchs=None):
-        self.id = id
+    def __init__(self, p_id, score=0, old_matchs=None):
+        self.id = p_id
         self.score = score
         self.old_matchs = old_matchs or set()
 

@@ -39,6 +39,7 @@ class PlayerController:
                     *player_info
                 )
                 self.player_list.append(new_player)
+                self.save_player_list()
                 return new_player
             else:
                 print('Joueur déja existant')
@@ -53,8 +54,19 @@ class PlayerController:
                      if player.first_name == first_name and player.last_name == last_name), None)
 
     def modify_player_elo(self):
-        # self.view.show_all_players()
-        pass
+        index_choice = -1
+        while True:
+            try:
+                index_choice = int(self.view.ask_player_index(self.player_list))
+                break
+            except ValueError:
+                print('Not a numeric value')
+                continue
+
+        player = self.get_by_id(index_choice)
+        new_elo = self.view.ask_new_elo(player)
+        player.rank = new_elo
+        print('Elo Changed')
 
     def load_player_list(self):
         my_list = Player.load_all()
