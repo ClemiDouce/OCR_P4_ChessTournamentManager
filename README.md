@@ -73,3 +73,12 @@ flake8 --format=html --htmldir=flake_rapport
 ```
 
 Un rapport sera généré dans le dossier "flake_rapport"
+
+## Remplissage base de donnée
+
+Dans un terminal ouvert dans le dossier du logiciel, après avoir activé l'environnement virtuel, entrez la commande suivante :
+
+```bash
+python fixture.py
+```
+
