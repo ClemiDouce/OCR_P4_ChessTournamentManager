@@ -19,28 +19,18 @@ class TournamentView:
         return input("Votre réponse : ")
 
     def ask_tournament_index(self, tournoi_list):
-        while True:
-            for index, tournament in enumerate(tournoi_list):
-                print(f"[{index}] - {tournament.name}")
-            try:
-                choice = int(input("Entrez le numero du tournoi de votre choix : "))
-            except ValueError:
-                print("Vous n'avez pas rentré de chiffre")
-                continue
-            if choice not in range(len(tournoi_list)):
-                print("Aucun tournoi correspond a cet index")
-                continue
-            else:
-                return choice
+        for index, tournament in enumerate(tournoi_list):
+            print(f"[{index}] - {tournament.name}")
+
+        choice = int(input("Entrez le numero du tournoi de votre choix : "))
+
+        return choice
 
     def ask_tournament_load(self):
-        while True:
-            print("Voulez vous \n[0] Charger un tournoi existant\n[1] Créer un nouveau tournoi\n[2] Quitter")
-            choice = input("Réponse : ")
-            if choice in ["0", "1", "2"]:
-                return choice
-            else:
-                print("Votre choix n'existe pas")
+
+        print("Voulez vous \n[0] Charger un tournoi existant\n[1] Créer un nouveau tournoi\n[2] Quitter")
+        choice = input("Réponse : ")
+        return choice
 
     def display_tournament_rounds(self, tournament):
         print(f"---- Liste des tours du tournoi {tournament.name} ----")

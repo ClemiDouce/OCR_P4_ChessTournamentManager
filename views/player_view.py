@@ -40,10 +40,11 @@ class PlayerView:
                   "[0] Oui\n [1] Non\n",
                   "Entrez votre choix : ", end=" ")
             choice = input()
-            if choice in ['0', '1']:
-                return choice
-            else:
-                continue
+            return choice
+        # if choice in ['0', '1']:
+        #     return choice
+        # else:
+        #     continue
 
     def show_player_list(self, player_list):
         print(

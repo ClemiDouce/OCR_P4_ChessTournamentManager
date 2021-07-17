@@ -41,36 +41,36 @@ player_table.insert_multiple([
 
 tournament_table.insert_multiple([
     {
-      "id": 1,
-      "name": "TournoiTest",
-      "location": "Bordeaux",
-      "start_date": "22/07/2020",
-      "end_date": "23/07/2020",
-      "players": [
-        {
-          "id": 1,
-          "score": 0,
-          "old_matchs": []
-        },
-        {
-          "id": 2,
-          "score": 0,
-          "old_matchs": []
-        },
-        {
-          "id": 3,
-          "score": 0,
-          "old_matchs": []
-        },
-        {
-          "id": 4,
-          "score": 0,
-          "old_matchs": []
-        }
-      ],
-      "max_turn": 3,
-      "round_list": [],
-      "actual_turn": 0,
-      "time_control": "bullet"
+        "id": 1,
+        "name": "TournoiTest",
+        "location": "Bordeaux",
+        "start_date": "22/07/2020",
+        "end_date": "23/07/2020",
+        "players": [
+            {
+                "id": 1,
+                "score": 0,
+                "old_matchs": []
+            },
+            {
+                "id": 2,
+                "score": 0,
+                "old_matchs": []
+            },
+            {
+                "id": 3,
+                "score": 0,
+                "old_matchs": []
+            },
+            {
+                "id": 4,
+                "score": 0,
+                "old_matchs": []
+            }
+        ],
+        "max_turn": 3,
+        "round_list": [],
+        "actual_turn": 0,
+        "time_control": "bullet"
     }
 ])

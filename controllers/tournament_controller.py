@@ -28,12 +28,15 @@ class TournamentController:
     def get_tournament(self):
         while True:
             choice = self.view.ask_tournament_load()
-            if choice == "0":
-                return self.get_active_tournament()
-            elif choice == "1":
-                return self.create_new_tournament()
-            elif choice == "2":
-                return None
+            if choice in ["0", "1", "2"]:
+                if choice == "0":
+                    return self.get_active_tournament()
+                elif choice == "1":
+                    return self.create_new_tournament()
+                elif choice == "2":
+                    return None
+            else:
+                print("Votre choix n'existe pas")
 
     def create_new_tournament(self):
         while True:
@@ -83,7 +86,7 @@ class TournamentController:
             tournament.round_list.append(actual_round)
             self.view.display_turn()
             self.run_round(tournament, actual_round)
-            if tournament.actual_turn < tournament.max_turn - 1:
+            if tournament.actual_turn < tournament.max_turn:
                 stop_tournament = self.view.ask_stop_tournament()
                 if stop_tournament == "0":
                     continue
@@ -124,11 +127,11 @@ class TournamentController:
 
         # recuperation des joueurs ayant le score maximum
         best_score = list(
-                (
-                    self.player_controller.get_by_id(participant.id),
-                    participant.score
-                )
-                for participant in classement
+            (
+                self.player_controller.get_by_id(participant.id),
+                participant.score
+            )
+            for participant in classement
         )
         self.view.display_ranking(best_score)
 
@@ -145,8 +148,8 @@ class TournamentController:
 
     def first_sorting(self, tournament):
         sorted_list = sorted(
-                tournament.players,
-                key=lambda p: self.player_controller.get_by_id(p.id).rank
+            tournament.players,
+            key=lambda p: self.player_controller.get_by_id(p.id).rank
         )
         first_half, second_half = split_array_in_half(sorted_list)
         match_list = [
@@ -163,8 +166,8 @@ class TournamentController:
         used_id = set()
         sorted_participants = sorted(
             tournament.players, key=lambda p: (
-                    p.score,
-                    self.player_controller.get_by_id(p.id).rank
+                p.score,
+                self.player_controller.get_by_id(p.id).rank
             )
         )
         for index, participant in enumerate(sorted_participants):
@@ -178,7 +181,7 @@ class TournamentController:
                     if i == len(sorted_participants):
                         match_list.append(
                             self.create_match(
-                                    participant, other_participant
+                                participant, other_participant
                             )
                         )
                         used_id.update({participant.id, other_participant})
@@ -187,7 +190,7 @@ class TournamentController:
                 else:
                     match_list.append(
                         self.create_match(
-                                participant, other_participant
+                            participant, other_participant
                         )
                     )
                     used_id.update({participant.id, other_participant.id})
@@ -198,8 +201,8 @@ class TournamentController:
         participant_1.old_matchs.add(participant_2.id)
         participant_2.old_matchs.add(participant_1.id)
         return Match(
-                self.player_controller.get_by_id(participant_1.id), 0,
-                self.player_controller.get_by_id(participant_2.id), 0
+            self.player_controller.get_by_id(participant_1.id), 0,
+            self.player_controller.get_by_id(participant_2.id), 0
         )
 
     # Rapport
