@@ -62,3 +62,14 @@ Puis, entrez la commande :
 python app.py
 ```
 
+
+
+## Génération Rapport Flake8
+
+Après avoir activé l'environnement virtuel, entrez la commande suivante :
+
+```bash
+flake8 --format=html --htmldir=flake_rapport
+```
+
+Un rapport sera généré dans le dossier "flake_rapport"
